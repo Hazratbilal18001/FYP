@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Healthcare AI Platform — Get expert guidance from 5 specialist AI doctors covering medical, nutrition, therapy, dental, and hair health." />
+    <title>HealthAI — Your AI Health Platform</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet" />
+
+    <!-- jsPDF for PDF downloads -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+
+    <!-- Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-theme="medical">
+    <!-- ═══════════════════════════════════════════════════════
+         SIDEBAR
+         ═══════════════════════════════════════════════════════ -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Logo / Brand -->
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-icon">🩺</div>
+          <div>
+            <h1 class="brand-name">Health AI</h1>
+            <p class="brand-tagline">AI Healthcare Platform</p>
+          </div>
+        </div>
+        <button class="btn-new-chat" id="btnNewChat" title="New Chat">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          New Chat
+        </button>
+      </div>
+
+      <!-- Domain Selector -->
+      <div class="domain-selector">
+        <p class="domain-label">Choose Your Specialist</p>
+        <div class="domain-pills">
+          <button
+            class="domain-pill active"
+            data-domain="medical"
+            id="pill-medical">
+            <span class="pill-icon">🏥</span>
+            <span class="pill-text">Medical</span>
+          </button>
+          <button
+            class="domain-pill"
+            data-domain="nutrition"
+            id="pill-nutrition">
+            <span class="pill-icon">🥗</span>
+            <span class="pill-text">Nutrition</span>
+          </button>
+          <button class="domain-pill" data-domain="therapy" id="pill-therapy">
+            <span class="pill-icon">🧠</span>
+            <span class="pill-text">Therapy</span>
+          </button>
+          <button class="domain-pill" data-domain="teeth" id="pill-teeth">
+            <span class="pill-icon">🦷</span>
+            <span class="pill-text">Dental</span>
+          </button>
+          <button class="domain-pill" data-domain="hair" id="pill-hair">
+            <span class="pill-icon">💇</span>
+            <span class="pill-text">Hair</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Chat History -->
+      <div class="chat-history-section">
+        <p class="history-label">Recent Chats</p>
+        <div class="chat-list" id="chatList">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <p>Powered by <strong>LangGraph</strong> + <strong>Groq</strong></p>
+      </div>
+    </aside>
+
+    <!-- Mobile sidebar toggle -->
+    <button
+      class="sidebar-toggle"
+      id="sidebarToggle"
+      aria-label="Toggle sidebar">
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <line x1="3" y1="6" x2="21" y2="6" />
+        <line x1="3" y1="12" x2="21" y2="12" />
+        <line x1="3" y1="18" x2="21" y2="18" />
+      </svg>
+    </button>
+
+    <!-- ═══════════════════════════════════════════════════════
+         MAIN CONTENT
+         ═══════════════════════════════════════════════════════ -->
+    <main class="main-content" id="mainContent">
+      <!-- Floating theme decorations -->
+      <div class="theme-decor" id="themeDecor">
+        <div class="decor-orb orb-1"></div>
+        <div class="decor-orb orb-2"></div>
+        <div class="decor-orb orb-3"></div>
+      </div>
+
+      <!-- Welcome Screen (shown when no chat is active) -->
+      <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-glow"></div>
+        <div class="welcome-badge" id="welcomeBadge">
+          <span class="welcome-badge-icon">🏥</span>
+          <span class="welcome-badge-text">Medical Specialist</span>
+        </div>
+        <h2 class="welcome-title">Healthcare AI Platform</h2>
+        <p class="welcome-subtitle">
+          Choose a specialist and ask anything about your health. Get detailed,
+          professional guidance powered by AI.
+        </p>
+
+        <div class="welcome-cards" id="welcomeCards">
+          <div
+            class="welcome-card"
+            data-prompt="I've been having frequent headaches and fatigue for a week. What could be causing this?"
+            data-domain="medical">
+            <div class="wcard-icon">💊</div>
+            <div>
+              <p class="wcard-title">Headaches & Fatigue</p>
+              <p class="wcard-desc">Explore possible causes</p>
+            </div>
+          </div>
+          <div
+            class="welcome-card"
+            data-prompt="Create a detailed 7-day meal plan for weight loss with calorie counts"
+            data-domain="nutrition">
+            <div class="wcard-icon">🥗</div>
+            <div>
+              <p class="wcard-title">Weight Loss Diet</p>
+              <p class="wcard-desc">Get a complete meal plan</p>
+            </div>
+          </div>
+          <div
+            class="welcome-card"
+            data-prompt="I'm feeling very anxious and can't stop overthinking. What coping strategies can help?"
+            data-domain="therapy">
+            <div class="wcard-icon">🧘</div>
+            <div>
+              <p class="wcard-title">Anxiety & Overthinking</p>
+              <p class="wcard-desc">Calm coping strategies</p>
+            </div>
+          </div>
+          <div
+            class="welcome-card"
+            data-prompt="I have tooth sensitivity when drinking cold water and my gums bleed when brushing"
+            data-domain="teeth">
+            <div class="wcard-icon">🦷</div>
+            <div>
+              <p class="wcard-title">Tooth Sensitivity</p>
+              <p class="wcard-desc">Dental care guidance</p>
+            </div>
+          </div>
+          <div
+            class="welcome-card"
+            data-prompt="I'm experiencing severe hair fall and my scalp is itchy with dandruff. What should I do?"
+            data-domain="hair">
+            <div class="wcard-icon">💇</div>
+            <div>
+              <p class="wcard-title">Hair Fall & Dandruff</p>
+              <p class="wcard-desc">Hair specialist advice</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Messages Area -->
+      <div class="chat-area" id="chatArea">
+        <div class="messages-container" id="messagesContainer">
+          <!-- Messages rendered here -->
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="input-area" id="inputArea">
+        <div class="input-wrapper">
+          <textarea
+            id="messageInput"
+            placeholder="Describe your symptoms, ask about a diet, or share how you feel…"
+            rows="1"
+            maxlength="4000"></textarea>
+          <button class="btn-send" id="btnSend" title="Send message" disabled>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" />
+            </svg>
+          </button>
+        </div>
+        <p class="input-disclaimer">
+          HealthAI provides educational information only. Always consult a
+          healthcare professional for medical advice.
+        </p>
+      </div>
+    </main>
+
+    <!-- Mobile overlay for sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
